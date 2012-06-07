@@ -4,15 +4,16 @@
 
 		private $conf=array();
 
-  		function &getinstance() {
+		function &getinstance() {
 			static $instance = array();
-    		if (!$instance) {
-      			$instance[0] =& new settings();
+    	if (!$instance) {
+     		$instance[0] =& new settings();
 				if (file_exists('app/conf/settings.php'))
 					require('app/conf/settings.php');
-				else echo "settings.php not included";
+				else
+					echo "settings.php not included";
 				$instance[0]->conf = $siteconf;
-		 	}
+			}
     	return $instance[0];
 		}
 
@@ -32,6 +33,7 @@
 			return $self->conf[$key];
 			
 		}
+
 	}
 
 ?>
