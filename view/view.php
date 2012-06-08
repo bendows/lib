@@ -16,12 +16,10 @@ class lib_view extends object {
     function __construct(&$page) {
         if (!is_object($page))
             echo "Page[$page] is not a page object";
-
         //Suck in some variables from the page object
         foreach ($this->pagevars as $var)
             if (isset($page->{$var}))
                 $this->{$var} = $page->{$var};
-
         if (is_array($page->helpers))
             if (count($page->helpers))
                 foreach ($page->helpers as $helper) {
@@ -39,20 +37,14 @@ class lib_view extends object {
     function flash($key = false) {
         if (!$key)
             return;
-
         if (empty($key))
             return;
-
         if (!is_scalar($key))
             return;
-
         if (!array_key_exists($key, $_SESSION))
             return;
-
         $msg = $_SESSION[$key];
-
         $_SESSION[$key] = "";
-
         return $msg;
     }
 
