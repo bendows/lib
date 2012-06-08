@@ -1,303 +1,378 @@
 <?
+
 class lib_component_formfilter extends lib_component_component {
 
-  function __construct ($data, &$apage) {
-	}
-				
-	function parseinput ($src=array(), $dst=array()) {
+    function __construct($data, &$apage) {
+        
+    }
 
-      if (! is_array($src)) { return (string) "src not an array"; }
-      if (! is_array($dst)) { return (string) "dst not an array"; }
+    function parseinput($src = array(), $dst = array()) {
 
-      if (empty($src)) { return (string) "src is empty"; }
-      if (empty($dst)) { return (string) "dst is empty"; }
+        if (!is_array($src)) {
+            return (string) "src not an array";
+        }
+        if (!is_array($dst)) {
+            return (string) "dst not an array";
+        }
 
-      $ar = array(); $errors = "";
+        if (empty($src)) {
+            return (string) "src is empty";
+        }
+        if (empty($dst)) {
+            return (string) "dst is empty";
+        }
 
-      foreach ($dst as $key=>&$field) {
+        $ar = array();
+        $errors = "";
 
-        if (! empty ($errors))
-            continue;
+        foreach ($dst as $key => &$field) {
 
-	  switch ((string)$field) {
+            if (!empty($errors))
+                continue;
 
-	  case "zint":
+            switch ((string) $field) {
 
-		  (boolean) $check = iszint($src[$key]);
+                case "zint":
 
-		  if ($check) { $ar[$key]=(int)$src[$key]; }
-		  else { $errors.=" Invalid znumber [$key] "; }
+                    (boolean) $check = iszint($src[$key]);
 
-		  break;
+                    if ($check) {
+                        $ar[$key] = (int) $src[$key];
+                    } else {
+                        $errors.=" Invalid znumber [$key] ";
+                    }
 
-	  case "int":
+                    break;
 
-		  (boolean) $check = isint($src[$key]);
+                case "int":
 
-		  if ($check) { $ar[$key]=$src[$key]; }
-		  else { $errors.=" Invalid number [$key] "; }
+                    (boolean) $check = isint($src[$key]);
 
-		  break;
+                    if ($check) {
+                        $ar[$key] = $src[$key];
+                    } else {
+                        $errors.=" Invalid number [$key] ";
+                    }
 
-	  case "str":
+                    break;
 
-		  (boolean) $check = isstr($src[$key]);
+                case "str":
 
-		  if ($check) { $ar[$key]=$src[$key]; }
-		  else { $errors.=" Invalid string [$key] "; }
+                    (boolean) $check = isstr($src[$key]);
 
-		  break;
+                    if ($check) {
+                        $ar[$key] = $src[$key];
+                    } else {
+                        $errors.=" Invalid string [$key] ";
+                    }
 
-	  case "emptystr":
+                    break;
 
-		  (boolean) $check = isemptystr($src[$key]);
+                case "emptystr":
 
-		  if ($check) { $ar[$key]=$src[$key]; }
-		  else { $errors.=" Invalid zstring [$key] "; }
+                    (boolean) $check = isemptystr($src[$key]);
 
-		  break;
+                    if ($check) {
+                        $ar[$key] = $src[$key];
+                    } else {
+                        $errors.=" Invalid zstring [$key] ";
+                    }
 
-	  case "float":
+                    break;
 
-		  (boolean) $check = isfloat($src[$key]);
-		  
-		  if ($check) { $ar[$key]=(float)$src[$key]; }
-		  else { $errors.=" Invalid znumber [$key] "; }
+                case "float":
 
-		  break;
+                    (boolean) $check = isfloat($src[$key]);
 
-	  case "md5":
+                    if ($check) {
+                        $ar[$key] = (float) $src[$key];
+                    } else {
+                        $errors.=" Invalid znumber [$key] ";
+                    }
 
-		  (boolean) $check = ismd5($src[$key]);
+                    break;
 
-		  if ($check) { $ar[$key]=(string)$src[$key]; }
-		  else { $errors.=" Invalid code [$key] "; }
+                case "md5":
 
-		  break;
+                    (boolean) $check = ismd5($src[$key]);
 
-	  case "name":
+                    if ($check) {
+                        $ar[$key] = (string) $src[$key];
+                    } else {
+                        $errors.=" Invalid code [$key] ";
+                    }
 
-		  (boolean) $check = isname($src[$key]);
+                    break;
 
-		  if ($check) { $ar[$key]=$src[$key]; }
-		  else { $errors.=" Invalid name [$key] "; }
+                case "name":
 
-		  break;
+                    (boolean) $check = isname($src[$key]);
 
-    case "uid":
+                    if ($check) {
+                        $ar[$key] = $src[$key];
+                    } else {
+                        $errors.=" Invalid name [$key] ";
+                    }
 
-      (boolean) $check = isuid($src[$key]);
+                    break;
 
-      if ($check) { $ar[$key]=$src[$key]; }
-      else { $errors.=" Invalid username [$key] "; }
+                case "uid":
 
-      break;
+                    (boolean) $check = isuid($src[$key]);
 
-	  case "datetime":
+                    if ($check) {
+                        $ar[$key] = $src[$key];
+                    } else {
+                        $errors.=" Invalid username [$key] ";
+                    }
 
-		  (boolean) $check = isdatetime($src[$key]);
+                    break;
 
-		  if ($check) { $ar[$key]=$src[$key]; }
-		  else { $errors.=" Invalid date [$key] "; }
+                case "datetime":
 
-		  break;
+                    (boolean) $check = isdatetime($src[$key]);
 
-	  case "path":
+                    if ($check) {
+                        $ar[$key] = $src[$key];
+                    } else {
+                        $errors.=" Invalid date [$key] ";
+                    }
 
-		  (boolean) $check = ispath($src[$key]);
+                    break;
 
-		  if ($check) { $ar[$key]=$src[$key]; }
-		  else { $errors.=" Invalid path [$key] "; }
+                case "path":
 
-		  break;
+                    (boolean) $check = ispath($src[$key]);
 
-	  case "emptypath":
+                    if ($check) {
+                        $ar[$key] = $src[$key];
+                    } else {
+                        $errors.=" Invalid path [$key] ";
+                    }
 
-		  (boolean) $check = isemptypath($src[$key]);
+                    break;
 
-		  if ($check) { $ar[$key]=$src[$key]; }
-		  else { $errors.=" Invalid zpath [$key] "; }
+                case "emptypath":
 
-		  break;
+                    (boolean) $check = isemptypath($src[$key]);
 
-	  case "dirname":
+                    if ($check) {
+                        $ar[$key] = $src[$key];
+                    } else {
+                        $errors.=" Invalid zpath [$key] ";
+                    }
 
-  		stripleadingtrailing($src[$key]);
-  		$src[$key] = replacespaces($src[$key]);
+                    break;
 
-		  (boolean) $check = isdirname($src[$key]);
+                case "dirname":
 
-		  if ($check) { $ar[$key]=$src[$key]; }
-		  else { $errors.=" Invalid dirname [$key] "; }
+                    stripleadingtrailing($src[$key]);
+                    $src[$key] = replacespaces($src[$key]);
 
-		  break;
+                    (boolean) $check = isdirname($src[$key]);
 
-	  case "email":
+                    if ($check) {
+                        $ar[$key] = $src[$key];
+                    } else {
+                        $errors.=" Invalid dirname [$key] ";
+                    }
 
-		  (boolean) $check = isemail($src[$key]);
+                    break;
 
-		  if ($check) { $ar[$key]=$src[$key]; }
-		  else { $errors.=" Invalid email [$key] "; }
+                case "email":
 
-		  break;
+                    (boolean) $check = isemail($src[$key]);
 
-	  case "emailmx":
+                    if ($check) {
+                        $ar[$key] = $src[$key];
+                    } else {
+                        $errors.=" Invalid email [$key] ";
+                    }
 
-		  (boolean) $check = isemailmx($src[$key]);
+                    break;
 
-		  if ($check) { $ar[$key]=$src[$key]; }
-		  else { $errors.=" Invalid emailmx [$key] "; }
+                case "emailmx":
 
-		  break;
+                    (boolean) $check = isemailmx($src[$key]);
 
-	  case "ipaddr":
+                    if ($check) {
+                        $ar[$key] = $src[$key];
+                    } else {
+                        $errors.=" Invalid emailmx [$key] ";
+                    }
 
-		  (boolean) $check =isipaddr($src[$key]);
+                    break;
 
-		  if ($check) { $ar[$key]= $src[$key];}
-		  else { $errors.=" Invalid IP [$key] "; }
+                case "ipaddr":
 
-		  break;
+                    (boolean) $check = isipaddr($src[$key]);
 
-	  case "html":
+                    if ($check) {
+                        $ar[$key] = $src[$key];
+                    } else {
+                        $errors.=" Invalid IP [$key] ";
+                    }
 
-		  (boolean) $check = true;
-		  if ($check) {
-			  $ar[$key] = preg_replace ("/\n\r/i", "\n", $src[$key]);
-				  //$ar[$key] = preg_replace ("/\n/","\n\r\n", $ar[$key]);
-		  } else { $errors.=" Invalid html [$key] "; }
+                    break;
 
-		  break;
+                case "html":
 
-	  case "text":
+                    (boolean) $check = true;
+                    if ($check) {
+                        $ar[$key] = preg_replace("/\n\r/i", "\n", $src[$key]);
+                        //$ar[$key] = preg_replace ("/\n/","\n\r\n", $ar[$key]);
+                    } else {
+                        $errors.=" Invalid html [$key] ";
+                    }
 
-	    (boolean) $check =istext($src[$key]);
+                    break;
 
-			if ($check) 
-				$ar[$key]= $src[$key];
-			else
-				$errors.="invalid text [$key] ";
+                case "text":
 
-			break;
+                    (boolean) $check = istext($src[$key]);
 
-	  default:
+                    if ($check)
+                        $ar[$key] = $src[$key];
+                    else
+                        $errors.="invalid text [$key] ";
 
-		  $errors.=" Unknown datetype [$field] ";
+                    break;
 
-		  break;
+                default:
 
-	  }
-      }
+                    $errors.=" Unknown datetype [$field] ";
 
-  if (! empty ($errors))
-		  return (string) "$errors";
+                    break;
+            }
+        }
 
-      return (array) $ar;
-} 
+        if (!empty($errors))
+            return (string) "$errors";
 
-function isint($n) {
- if (preg_match("/^[1-9][0-9]*$/", $n)){ return (boolean)true; }
- return false;
-}
+        return (array) $ar;
+    }
+
+    function isint($n) {
+        if (preg_match("/^[1-9][0-9]*$/", $n)) {
+            return (boolean) true;
+        }
+        return false;
+    }
+
+    function iszint($n) {
+        if (preg_match("/^[0-9]+$/", $n)) {
+            return (boolean) true;
+        }
+        return false;
+    }
+
+    function isfloat($v2) {
+        if (preg_match("/^[0-9]+\.?[0-9]+$/i", $v2)) {
+            return true;
+        }
+        return false;
+    }
+
+    function isdirname($v2) {
+        if (preg_match("%^[A-Z0-9_\(\)\+\-\.,]+$%i", $v2)) {
+            return true;
+        }
+        return false;
+        //if (preg_match("/^([A-Z]|[0-9]|\.|,|\(|\)|\+|\@|\-|\_|~|\ \.)+$/i", $v2)){ return true; }
+    }
+
+    function istext(&$v2) {
+        //if (! preg_match("%^[&A-Z'\"0-9@\ _\(\)\+\-\./\,]+$%i", $v2)){ return false; }
+        //$r = preg_split("/\r\n?/", $v2); 
+        $r = preg_split("/\r\n?/", $v2);
+        foreach ($r as &$line)
+            isstr($line);
+        $v2 = implode("<br>", $r);
+        return true;
+    }
+
+    function isstr(&$v2) {
+        //if (! preg_match("%^[&A-Z'\"0-9@\ _\(\)\+\-\./\,]+$%i", $v2)){ return false; }
+        $v2 = htmlspecialchars($v2, ENT_QUOTES, 'UTF-8');
+        if (empty($v2))
+            return false;
+        $v2 = preg_replace("%/%", "&#x2F;", $v2);
+        return true;
+    }
+
+    function isemptystr(&$v2) {
+        $v2 = htmlspecialchars($v2, ENT_QUOTES, 'UTF-8');
+        $v2 = preg_replace("%/%", "&#x2F;", $v2);
+        return true;
+    }
+
+    function isdatetime($v2) {
+        if (preg_match("/^2\d{3}\-\d\d\-\d\d\ \d\d\:\d\d\:\d\d$/", $v2))
+            return (bool) true;
+        return (bool) false;
+    }
+
+    function isname(&$v2) {
+        $v2 = htmlspecialchars($v2, ENT_QUOTES, 'UTF-8');
+        if (empty($v2))
+            return false;
+        return true;
+        if (preg_match("/^([A-Z]|[0-9]|\_)+$/i", $v2)) {
+            return true;
+        }
+        return false;
+        //if (preg_match("/^([A-Z]|[0-9]|\.|,|\(|\)|\+|\@|\-|\_|~|\ \.)+$/i", $v2)){ return true; }
+    }
+
+    function isuid($v2) {
+        if (preg_match("/^([A-Z]|[0-9]|\.|,|\+|\@|\-|\_|~|\.)+$/i", $v2)) {
+            return true;
+        }
+        return false;
+        //if (preg_match("/^([A-Z]|[0-9]|\.|,|\(|\)|\+|\@|\-|\_|~|\ \.)+$/i", $v2)){ return true; }
+    }
+
+    function ispath($v2) {
+        if (preg_match("%^/?[\(\)-_.a-zA-Z0-9-/]+$%", $v2)) {
+            return true;
+        }
+        return false;
+    }
+
+    function isemptypath($v2) {
+        if (preg_match("%^/?[-_.a-zA-Z0-9-/]*$%", $v2)) {
+            return true;
+        }
+        return false;
+    }
+
+    function isipaddr($v2) {
+        if (preg_match("/^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/", $v2))
+            return (bool) true;
+        return (bool) false;
+    }
+
+    function ismd5($v2) {
+        if (preg_match('#^[0-9a-f]{32}$#i', $v2)) {
+            return true;
+        }
+        return false;
+    }
+
+    function isemail($n) {
+        if (preg_match("/^[^@\s<&>]+@([-a-z0-9]+\.)+[a-z]{2,}$/i", $n))
+            return true;
+        return false;
+    }
+
+    function isemailmx($email) {
+        if (!isemail($email))
+            return (bool) false;
+        list($name, $domain) = split('@', $email);
+        if (!checkdnsrr($domain, 'MX')) {
+            return (bool) false; // No MX record found
+        };
+        return (bool) true;
+    }
 
-function iszint($n) {
- if (preg_match("/^[0-9]+$/", $n)){ return (boolean)true; }
- return false;
-}
-
-function isfloat ($v2) {
- if (preg_match("/^[0-9]+\.?[0-9]+$/i", $v2)){ return true; }
- return false;
-}
-
-function isdirname ($v2) {
- if (preg_match("%^[A-Z0-9_\(\)\+\-\.,]+$%i", $v2)){ return true; }
- return false;
- //if (preg_match("/^([A-Z]|[0-9]|\.|,|\(|\)|\+|\@|\-|\_|~|\ \.)+$/i", $v2)){ return true; }
-}
-
-function istext (&$v2) {
- //if (! preg_match("%^[&A-Z'\"0-9@\ _\(\)\+\-\./\,]+$%i", $v2)){ return false; }
-	//$r = preg_split("/\r\n?/", $v2); 
-	$r = preg_split("/\r\n?/", $v2); 
-	foreach ($r as &$line)
-		isstr($line);
-	$v2=implode ("<br>", $r);
- return true;
-}
-
-function isstr (&$v2) {
- //if (! preg_match("%^[&A-Z'\"0-9@\ _\(\)\+\-\./\,]+$%i", $v2)){ return false; }
- $v2 = htmlspecialchars ($v2, ENT_QUOTES, 'UTF-8');
- if (empty($v2))
-	return false;
- $v2 = preg_replace ("%/%", "&#x2F;", $v2);
- return true;
-}
-
-function isemptystr (&$v2) {
- $v2 = htmlspecialchars ($v2, ENT_QUOTES, 'UTF-8');
- $v2 = preg_replace ("%/%", "&#x2F;", $v2);
- return true;
-}
-
-function isdatetime ($v2) {
- if (preg_match ("/^2\d{3}\-\d\d\-\d\d\ \d\d\:\d\d\:\d\d$/", $v2))
-   return (bool) true;
-   return (bool) false;
-}
-
-function isname (&$v2) {
- $v2 = htmlspecialchars ($v2, ENT_QUOTES, 'UTF-8');
- if (empty($v2))
-	return false;
- return true;
- if (preg_match("/^([A-Z]|[0-9]|\_)+$/i", $v2)){ return true; }
- return false;
- //if (preg_match("/^([A-Z]|[0-9]|\.|,|\(|\)|\+|\@|\-|\_|~|\ \.)+$/i", $v2)){ return true; }
-}
-
-function isuid ($v2) {
- if (preg_match("/^([A-Z]|[0-9]|\.|,|\+|\@|\-|\_|~|\.)+$/i", $v2)){ return true; }
- return false;
- //if (preg_match("/^([A-Z]|[0-9]|\.|,|\(|\)|\+|\@|\-|\_|~|\ \.)+$/i", $v2)){ return true; }
-}
-
-function ispath ($v2) {
- if (preg_match("%^/?[\(\)-_.a-zA-Z0-9-/]+$%", $v2)){ return true; }
- return false;
-}
-
-function isemptypath ($v2) {
- if (preg_match("%^/?[-_.a-zA-Z0-9-/]*$%", $v2)){ return true; }
- return false;
-}
-
-function isipaddr ($v2) {
-  if (preg_match("/^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/", $v2))
-   return (bool) true;
-   return (bool) false;
-}
-
-function ismd5 ($v2) {
- if (preg_match('#^[0-9a-f]{32}$#i', $v2)) {
-   return true;
- }
- return false;
-}
-
-function isemail($n) {
- if (preg_match("/^[^@\s<&>]+@([-a-z0-9]+\.)+[a-z]{2,}$/i", $n))
-   return true;
- return false;
-}
-
-function isemailmx($email){
- if (! isemail($email))
-   return (bool) false;
- list($name, $domain) = split('@',$email);
- if(!checkdnsrr($domain,'MX')){
-   return (bool) false; // No MX record found
- };
- return (bool) true;
 }

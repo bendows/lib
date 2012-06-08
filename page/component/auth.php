@@ -163,4 +163,5 @@ class lib_component_auth extends lib_component_component {
     }
     return (boolean) false;
   }
+
 }?>
