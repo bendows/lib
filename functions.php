@@ -74,12 +74,6 @@ function pr(&$array) {
     echo "</pre>";
 }
 
-function arrayprint(&$array) {
-    echo "<pre>";
-    print_r($array);
-    echo "</pre>";
-}
-
 function bgoto($a) {
     header("Location: http://" . $_SERVER['HTTP_HOST'] . "/$a");
     exit(0);
