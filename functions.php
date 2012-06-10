@@ -123,19 +123,25 @@ function isint($n) {
 }
 
 function iszint($n) {
-    if (preg_match("/^[0-9]+$/", $n)) {
+    if (preg_match("/^[0-9]*$/", $n)) {
         return (boolean) true;
     }
     return false;
 }
 
-function isfloat($v2) {
-    if (preg_match("/^[0-9]+\.?[0-9]+$/i", $v2)) {
+function iszfloat($v2) {
+    if (preg_match("/^[+-]?([0-9]*\.[0-9]+|[0-9]*)$/i", $v2)) {
         return true;
     }
     return false;
 }
 
+function isfloat($v2) {
+    if (preg_match("/^[+-]?([0-9]*\.[0-9]+|[0-9]+)$/i", $v2)) {
+        return true;
+    }
+    return false;
+}
 function isdirname($v2) {
     if (preg_match("%^[A-Z0-9_\(\)\+\-\.,]+$%i", $v2)) {
         return true;
@@ -169,6 +175,12 @@ function isemptystr(&$v2) {
     return true;
 }
 
+function isemptydatetime($v2) {
+    if (preg_match("/^(2\d{3}\-\d\d\-\d\d\ \d\d\:\d\d\:\d\d)?$/", $v2))
+        return (bool) true;
+    return (bool) false;
+}
+
 function isdatetime($v2) {
     if (preg_match("/^2\d{3}\-\d\d\-\d\d\ \d\d\:\d\d\:\d\d$/", $v2))
         return (bool) true;
@@ -179,8 +191,7 @@ function isname(&$v2) {
     $v2 = htmlspecialchars($v2, ENT_QUOTES, 'UTF-8');
     if (empty($v2))
         return false;
-    return true;
-    if (preg_match("/^([A-Z]|[0-9]|\_)+$/i", $v2)) {
+    if (preg_match("%^([A-Z]|[0-9]|\_)+$%i", $v2)) {
         return true;
     }
     return false;
@@ -209,6 +220,12 @@ function isemptypath($v2) {
     return false;
 }
 
+function isemptyipaddr($v2) {
+    if (preg_match("/^((?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?))?$/", $v2))
+        return (bool) true;
+    return (bool) false;
+}
+
 function isipaddr($v2) {
     if (preg_match("/^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/", $v2))
         return (bool) true;
@@ -233,6 +250,12 @@ function isnumber($n) {
     if (preg_match("/^[0-9]+$/", $n)) {
         return (boolean) true;
     }
+    return false;
+}
+
+function isemptyemail($n) {
+    if (preg_match("/^([^@\s<&>]+@([-a-z0-9]+\.)+[a-z]{2,})?$/i", $n))
+        return true;
     return false;
 }
 
@@ -326,6 +349,18 @@ function parseinput($src = array(), $dst = array()) {
 
                 break;
 
+            case "zfloat":
+
+                (boolean) $check = iszfloat($src[$key]);
+
+                if ($check) {
+                    $ar[$key] = (float) $src[$key];
+                } else {
+                    $errors.=" Invalid zfloat [$key] ";
+                }
+
+                break;
+
             case "float":
 
                 (boolean) $check = isfloat($src[$key]);
@@ -333,7 +368,7 @@ function parseinput($src = array(), $dst = array()) {
                 if ($check) {
                     $ar[$key] = (float) $src[$key];
                 } else {
-                    $errors.=" Invalid znumber [$key] ";
+                    $errors.=" Invalid float [$key] ";
                 }
 
                 break;
@@ -370,6 +405,18 @@ function parseinput($src = array(), $dst = array()) {
                     $ar[$key] = $src[$key];
                 } else {
                     $errors.=" Invalid username [$key] ";
+                }
+
+                break;
+
+            case "emptydatetime":
+
+                (boolean) $check = isemptydatetime($src[$key]);
+
+                if ($check) {
+                    $ar[$key] = $src[$key];
+                } else {
+                    $errors.=" Invalid zdate [$key] ";
                 }
 
                 break;
@@ -412,8 +459,7 @@ function parseinput($src = array(), $dst = array()) {
 
             case "dirname":
 
-                stripleadingtrailing($src[$key]);
-                $src[$key] = replacespaces($src[$key]);
+                $src[$key] = replacespaces(trim($src[$key]));
 
                 (boolean) $check = isdirname($src[$key]);
 
@@ -421,6 +467,18 @@ function parseinput($src = array(), $dst = array()) {
                     $ar[$key] = $src[$key];
                 } else {
                     $errors.=" Invalid dirname [$key] ";
+                }
+
+                break;
+
+            case "emptyemail":
+
+                (boolean) $check = isemptyemail($src[$key]);
+
+                if ($check) {
+                    $ar[$key] = $src[$key];
+                } else {
+                    $errors.=" Invalid zemail [$key] ";
                 }
 
                 break;
@@ -445,6 +503,18 @@ function parseinput($src = array(), $dst = array()) {
                     $ar[$key] = $src[$key];
                 } else {
                     $errors.=" Invalid emailmx [$key] ";
+                }
+
+                break;
+
+            case "emptyipaddr":
+
+                (boolean) $check = isemptyipaddr($src[$key]);
+
+                if ($check) {
+                    $ar[$key] = $src[$key];
+                } else {
+                    $errors.=" Invalid zIP [$key] ";
                 }
 
                 break;
