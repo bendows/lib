@@ -19,10 +19,8 @@ class lib_page_page extends object {
     );
 
     function __construct() {
-				l::ll('## lib_page_page ('.$this->pagename.') start');
         parent::__construct(array_keys($this->objects));
         $this->pagename = get_class($this);
-				l::ll('## lib_page_page ('.$this->pagename.') end'."\n");
     }
 
     function ismodel($amodelname) {

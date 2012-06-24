@@ -3,14 +3,12 @@
 class object {
 
     function __construct($varnames = array()) {
-				l::ll('========object start');
 				//chassnames is a list of page objects inherrited
         $classnames[] = $parent_class_name = get_class($this);
         while ($parent_class_name = get_parent_class($parent_class_name))
             if ($parent_class_name !== "object")
                 $classnames[] = $parent_class_name;
 				foreach ($classnames as $classname)
-					l::ll('    pageclass '.$classname);
         $mergedvars = $varnames;
 				//iterate through all classes and merge their mergedvars 
         foreach ($classnames as $classname) {
@@ -18,10 +16,8 @@ class object {
             foreach ($varnames as $mergedvar) {
                 if (!isset($classvars[$mergedvar]))
                     continue;
-								l::ll($classname.'::'.$mergedvar);
                 //looping through all models, components or helpers
                 foreach ($classvars[$mergedvar] as $key => $data) {
-										l::ll('            '.$key.'    '.$mergedvars[$mergedvar][$data].'   '.$data);
                     if (is_array($data))
                         $mergedvars[$mergedvar][$key] = $data;
                     else
@@ -42,7 +38,6 @@ class object {
         foreach ($mergedvars['helpers'] as $helper => $dummy)
             if (!in_array($helper, $this->helpers))
                 $this->helpers[] = $helper;
-				l::ll('========object end');
     }
 
 }
