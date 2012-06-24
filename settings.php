@@ -1,5 +1,6 @@
 <?
 
+//singleton for reaading app/conf/settings.php
 class settings {
 
     private $conf = array();
@@ -9,9 +10,11 @@ class settings {
         if (!$instance) {
             $instance[0] = & new settings();
             if (file_exists('app/conf/settings.php'))
-                require('app/conf/settings.php');
-            else
+                require_once('app/conf/settings.php');
+            else {
                 echo "settings.php not included";
+								return null;
+						}
             $instance[0]->conf = $siteconf;
         }
         return $instance[0];
@@ -22,9 +25,9 @@ class settings {
             return $key;
         $self = &settings::getinstance();
         if (empty($self->conf))
-            return "no value";
+            return "";
         if (!array_key_exists($key, $self->conf))
-            return "no value";
+            return "";
         return $self->conf[$key];
     }
 }?>

@@ -7,7 +7,10 @@ class dispatcher {
 
     public static function make_router() {
         $router = new app_router_default();
-        $router->seturl(self::$_url);
+				 if ($router->maintenance)
+        	$router->seturl($router->maintenance);
+				 else
+        	$router->seturl(self::$_url);
         // more injection...
         return $router;
     }

@@ -11,94 +11,16 @@ class lib_model_mysql {
     private $vals = array();
     private $con = false;
 
-    final public function info($level = 0) {
-        switch ($level) {      
-            case 0:
-                $info = array(
-                    dbname => $this->ffdb,
-                    dbuser => $this->ffuid,
-                    msg => $this->fmsg
-                );
-                break;           
-            case 1:
-                $info = array(
-                    'dbhost' => $this->ffhost,
-                    'dbname' => $this->ffdb,
-                    'dbuser' => $this->ffuid,
-                    'sql' => $this->fsql,
-                    'msg' => $this->fmsg,
-                    'mmsg' => $this->fmmsg,
-                    'no' => $this->fno,
-                    'theclass' => get_class($this)
-                );
-                break;
-        }
-        return (array) $info;
-    }
-
-    final protected function setsql($afields = array(), $avalues = array()) {
-        $this->cols = array();
-        $this->vals = array();
-        if (!is_array($afields)) {
-            return false;
-        } if (empty($afields)) {
-            return false;
-        }
-        if (!is_array($avalues)) {
-            return false;
-        } if (empty($avalues)) {
-            return false;
-        }
-        foreach ($afields as $key => $type) {
-            if (!array_key_exists($key, $avalues))
-                continue;
-            $this->cols[] = $key;
-            $s = "";
-            $s = mysql_escape_string($avalues[$key]);
-            switch ($type) {
-                case "intorfloat":
-                    $this->vals[] = (float) $s;
-                    break;
-                case "int":
-                case "zint":
-                    $this->vals[] = "$s";
-                    break;
-                default:
-                    $this->vals[] = "'$s'";
-                    break;
-                /*
-                  case "str":
-                  case "emptystr":
-                  case "name":
-                  case "text":
-                  case "path":
-                  case "emptypath":
-                  case "dirname":
-                  case "emptydirname":
-                  case "email":
-                  case "emailmx":
-                  case "ipaddr":
-                  case "md5":
-                  case "html":
-                 */
-            }
-        }
-        return (boolean) true;
-    }
-
-    final public function sql() {
-        return (string) ($this->fsql);
-    }
-
     public function connect($mysqlconf = false) {
-        $this->fmmsg = "nothing done yet !";
+        $this->msg = "";
+        $this->emsg = "nothing done to mysql";
         if (!$mysqlconf)
             return false;
         if (is_scalar($mysqlconf)) {
-            $this->fmmsg = "$mysqlconf did not exist as a file and was not included";
+            $this->emsg = "$mysqlconf did not exist as a file and was not included";
             if (file_exists("$mysqlconf")) {
                 require("$mysqlconf");
-                $this->fmmsg = "$mysqlconf did exist as a file and was included";
+                $this->emsg = "$mysqlconf did exist as a file and was included";
             } else
                 return false;
         }
@@ -109,20 +31,18 @@ class lib_model_mysql {
         $this->ffuid = $lar['dbuser'];
         $this->ffpwd = $lar['dbpwd'];
         if (!$this->con = @mysql_connect($this->ffhost, $this->ffuid, $this->ffpwd, TRUE)) {
-            $this->fmsg = "could not connect to mysql server";
-            $this->fmmsg = mysql_error();
-            $this->fno = mysql_errno();
+            $this->emsg = "[".@mysql_errno($this->con)."]". mysql_error($this->con);
             return false;
         }
         if (!$this->selectdb()) {
+            $this->emsg = "[".@mysql_errno($this->con)."]". mysql_error($this->con);
             return false;
         }
-        $this->fmsg = 'Connected[' . $this->fmsg . ']';
-        $this->fmmsg = 'Connected [' . join('', mysql_fetch_row(mysql_query('SELECT NOW(), VERSION();', $this->con))) . "]";
+        $this->msg = 'Connected [' . join('', mysql_fetch_row(mysql_query('SELECT NOW(), VERSION();', $this->con))) . "]";
         return (boolean) true;
     }
 
-    final public function disconnect() {
+    public function disconnect() {
         
     }
 
@@ -130,163 +50,153 @@ class lib_model_mysql {
         return (boolean) (is_array(@mysql_fetch_row(mysql_query('SELECT VERSION();', $this->con))));
     }
 
-    final public function execute($s = '') {
-        $this->fsql = "";
-        $this->fsql = $s;
-        $this->fmsg = "";
-        $this->fno = "";
-        $this->fmmsg = "";
-        if (!$this->ok()) {
-            return false;
-        }
-        if (empty($s)) {
-            return false;
-        }
-        if (!@mysql_query($s, $this->con)) {
-            $this->fmsg = "Could not execute query";
-            $this->fno = mysql_errno();
-            $this->fmmsg = (string) mysql_error($this->con);
-            return false;
-        }
-        $this->fmsg = "SQL executed successfully";
-        $this->fmmsg = "effected rows [" . mysql_affected_rows($this->con) . "]";
-        $this->fno = "0";
-        return true;
-    }
-
-    final public function executesql() {
-        $this->fmsg = "";
-        $this->fno = "";
-        $this->fmmsg = "";
-        if (!@mysql_query($this->fsql, $this->con)) {
-            $this->fmsg = "Could not execute query";
-            $this->fno = mysql_errno();
-            $this->fmmsg = (string) mysql_error($this->con);
-            /*
-              switch (mysql_errno()) {
-              case 1062:
-              $this->fmmsg.=" [similar entry not allowed]";
-              break;
-              }
-             */
-            return false;
-        }
-        return true;
-    }
-
     final public function selectdb() {
+        $this->msg = $this->ffdb;
+        $this->emsg = "";
         if (!@mysql_select_db($this->ffdb, $this->con)) {
-            $this->fmsg = "Could not select db";
-            $this->fmmsg = @mysql_error($this->con);
-            $this->fno = mysql_errno();
+            $this->emsg = "[".@mysql_errno($this->con)."]". mysql_error($this->con);
             return false;
         }
         return true;
     }
 
-    final public function update($atablename = '', $afields = array(), $avalues = array(), $where = '') {
-        if (!$this->setsql((array) $afields, (array) $avalues)) {
-            return (boolean) false;
+    final private function executesql($sql) {
+        $this->msg = $sql;
+        $this->emsg = "";
+        if (!@mysql_query($sql, $this->con)) {
+            $this->emsg = "[".@mysql_errno($this->con)."]". mysql_error($this->con);
+            return false;
         }
-        $tmp = array();
-        foreach ($this->cols as $index => &$col) {
-            $tmp[] = "$col=" . $this->vals[$index];
+        return true;
+    }
+
+    final private function setcolsvals($afields = array(), $avalues = array()) {
+				$this->msg = "setcols";
+				$this->emsg = "setcols error";
+        $this->cols = array();
+        $this->vals = array();
+        if (!is_array($afields))
+            return false;
+        if (empty($afields))
+            return false;
+        if (!is_array($avalues))
+            return false;
+        if (empty($avalues))
+            return false;
+				$this->emsg = "";
+        foreach ($afields as $i => $fieldname) {
+            if (!array_key_exists($i, $avalues))
+                continue;
+            $this->cols[] = $fieldname;
+            $s = "";
+            $s = mysql_real_escape_string($avalues[$i]);
+            $this->vals[] = "'$s'";
         }
-        $this->fsql = "update " . $atablename . " set " . implode(',', $tmp) . " where ($where)";
-        if (!$this->selectdb()) {
-            return (boolean) false;
-        }
-        if (!$this->executesql()) {
-            return (boolean) false;
-        }
-        $this->fmsg = "Update [" . mysql_affected_rows($this->con) . "]";
-        $this->fmmsg = "Update [" . mysql_affected_rows($this->con) . "]";
-        $r = mysql_affected_rows($this->con);
-        $this->fno = $r;
         return (boolean) true;
     }
 
-    final public function insert($atablename = '', $afields = array(), $avalues = array()) {
-        if (!$this->setsql((array) $afields, (array) $avalues)) {
+    final private function insert_update_delete_prepare ($afields=array(), $avalues=array()) {
+				if (!$this->selectdb()) 
             return (boolean) false;
-        }
-        $this->fsql = "insert into $atablename (" .
-                implode(",", $this->cols) . ") values (" .
-                implode(",", $this->vals) . ")";
-        //echo $this->fsql; echo "<br>";
-        if (!$this->selectdb()) {
+        if (!$this->setcolsvals((array) $afields, (array) $avalues))
             return (boolean) false;
-        }
-        if (!$this->executesql()) {
-            return (boolean) false;
-        }
+				return (bool) true;
+	  }
+
+    public function update($atablename = '', $afields = array(), $avalues = array(), $where = '') {
+				$where = trim($where);
+				if (true !== (bool) $this->insert_update_delete_prepare($afields, $avalues))
+					return -1;
+				if (empty($where)) {
+					$this->emsg = "empty where clause";
+					return -100;
+				}
+        $tmp = array();
+        foreach ($this->cols as $index => &$col)
+            $tmp[] = "$col=" . $this->vals[$index];
+        $s = "update " . $atablename . " set " . implode(',', $tmp) . " where ($where)";
+				$this->msg = $s;
+				if (!$this->executesql($s))
+            return -2;
+        return mysql_affected_rows($this->con);
+    }
+
+    public function insert($atablename = '', $afields = array(), $avalues = array()) {
+				if (true !== (bool) $this->insert_update_delete_prepare($afields, $avalues))
+					return -1;
+        $s = "insert into $atablename (" . implode(",", $this->cols) . ") values (" .  implode(",", $this->vals) . ")";
+        if (!$this->executesql($s))
+            return -2;
         $nid = mysql_insert_id($this->con);
-        if ((int) $nid < 1)
-            return (bool) false;
-        $this->fmsg = "record successfully inserted";
-        $this->fmmmsg = "[" . (string) mysql_affected_rows() . "] row(s) inserted";
-        $this->fno = $nid;
         return (int) $nid;
     }
 
-    final public function delete($atablename = '', $where = '') {
-        $this->fsql = "delete from $atablename where $where";
-        if (!$this->selectdb()) {
-            return false;
-        }
-        if (!$this->executesql()) {
-            return (boolean) false;
-        }
+    public function delete($atablename = '', $where = '', $values=array()) {
+				if (!$this->selectdb())
+            return -1;
+				$this->emsg = "where tablename values or fields mismatch";
+				$where = trim($where);
+				if (empty($where))
+            return -2;
+				$atablename=trim($atablename);	
+				if (empty($atablename))
+            return -3;
+				if (empty($values))
+						return -4;
+				$this->emsg = "mysql escape error";
+        foreach ($values as &$value)
+            if (false === ($value = mysql_real_escape_string($value)))
+                return false;
+        $s = "delete from $atablename where ".vsprintf($where, $values);
+        if (!$this->executesql($s))
+            return -5;
         $r = mysql_affected_rows($this->con);
-        $this->fmsg = "deleted[$r]";
-        $this->fmmmsg = "[" . (string) mysql_affected_rows() . "] row(s) deleted";
-        $this->fno = $r;
         return (int) $r;
     }
 
-    final public function row($s = '', $values = array()) {
-        if (empty($values)) {
-            $this->fsql = $s;
-        } else {
-            foreach ($values as &$value) {
-                if (preg_match("/^([A-Z]|[0-9]|\.|,|\+|\@|\-|\_|~|\.)+$/i", $value))
-                    continue;
-                return false;
+    public function row($s = '', $values = array()) {
+				$this->msg = "function row";
+				$this->emsg = "";
+				$s = trim($s);
+				if (empty($s)) {
+					$this->emsg = "empty sql string";
+					return (bool) false;
+				}
+				if (empty($values)){
+					$this->emsg = "empty values";
+					return (bool) false;
+				}
+
+			/*foreach ($values as &$value) {
+         if (preg_match("/^([A-Z]|[0-9]|\.|,|\+|\@|\-|\_|~|\.)+$/i", $value))
+         continue;
+      return false;
             }
-        }
-        if (!$this->selectdb()) {
-            return false;
-        }
+		 */
+        if (!$this->selectdb())
+						return (bool) false;
+				$this->emsg = "mysql escape error";
         foreach ($values as &$value) {
-            if (false === ($value = mysql_real_escape_string($value)))
+            if (false === ($value = mysql_real_escape_string($value, $this->con))) {
                 return false;
+						}
         }
-        $this->fsql = vsprintf($s, $values);
-        if (!$arow = mysql_query($this->fsql, $this->con)) {
-            $this->fmsg = "Could not execute qry";
-            $this->fmmsg = mysql_error($this->con);
-            $this->fno = mysql_errno();
-            return false;
+				$this->emsg = "";
+        $s = vsprintf($s, $values);
+        $this->msg = $s;
+        if (!$arow = mysql_query($s, $this->con)) {
+			      $this->emsg = "[".@mysql_errno($this->con)."]". mysql_error($this->con);
+            return (bool) false;
         }
         if ((int) mysql_num_rows($arow) === 1) {
-            $this->fmsg = "1 row returned";
-            $this->fmmsg = (string) mysql_num_rows($arow) . " returned";
             $er = (array) mysql_fetch_assoc($arow);
-            if (!is_array($er)) {
-                return false;
-            }
-            if (empty($er)) {
-                return false;
-            }
-            if (!isset($er)) {
-                return false;
-            }
             return (array) $er;
         }
-        $this->fmsg = "Query executed, but too many or few matches";
-        $this->fmmsg = mysql_error($this->con);
-        $this->fno = mysql_errno();
-        return (boolean) false;
+        if ((int) mysql_num_rows($arow) > 1) {
+					$this->emsg = "to many rows returned";
+        	return (boolean) false;
+				}
+				return array();
     }
 
     public function rows($s = '', $values = array(), $key = 'id') {
@@ -328,7 +238,7 @@ class lib_model_mysql {
         return (array) $link;
     }
 
-    final public function rowsa($s = '', $values = array(), $key = 'id') {
+    public function rowsa($s = '', $values = array(), $key = 'id') {
         if (empty($values)) {
             $this->fsql = $s;
         } else {

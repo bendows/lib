@@ -1,6 +1,6 @@
 <?php
 
-class lib_view extends object {
+class lib_view {
 
     var $viewfile = false;
     var $layout = false;

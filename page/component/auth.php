@@ -30,7 +30,7 @@ class lib_component_auth extends lib_component_component {
     $msg=array();
     $msg[]="<br>";
 		$msg[]="<b><font face='verdana' color=black>You have successfully generated a password reset request for your account at ".
-			$_SERVER['HTTP_HOST']."<br>";
+		$_SERVER['HTTP_HOST']."<br>";
     $msg[]="<br>";
     $msg[]="Your username is: <b>$email</b><br>";
     $msg[]="<br>";
@@ -137,10 +137,9 @@ class lib_component_auth extends lib_component_component {
 	}
 
 	function logout() {
-    $_SESSION['euid']="";
-    $_SESSION['tid']="";
-    $_SESSION['datec']="";
-    $_SESSION['handle']="";
+		l::ll('calling session_destroy() php function in logout method');
+		session_destroy();
+		l::ll('at end of  calling session_destroy() php function in logout method');
 	}
 
   function authenticate ($email, $apwd) {

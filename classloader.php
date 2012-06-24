@@ -3,6 +3,9 @@
 function __autoload($classname) {
 
     switch (true) {
+        case preg_match("%^l$%", $classname):
+            $classname = "lib/l";
+						break;
         case preg_match("%^app_view_%", $classname):
             $fn = preg_replace("%^app_view_%", "", $classname);
             $classname = "app/views/$fn";
