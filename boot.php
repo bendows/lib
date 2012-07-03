@@ -26,4 +26,5 @@ if ($apage->autorender)
     $apage->render();
 
 $apage->shutdown();
+
 ?>
