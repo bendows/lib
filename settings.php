@@ -12,12 +12,12 @@ class settings {
             if (file_exists('app/conf/settings.php'))
                 require_once('app/conf/settings.php');
             else {
-								$docroot = dirname(__FILE__)."/../";
+								$docroot = dirname(__FILE__)."/..";
                 $tmp = <<<EOT
 Create $docroot/app/conf/settings.php with the following content:
 
 <?
-    siteconf=array(
+    \$siteconf=array(
     "maintenance"=>"/maintain.html",
     "logfile"=>"html/messages.log",
     "mysqlconf"=>"app/conf/sitedb.php",

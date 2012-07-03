@@ -5,7 +5,7 @@ class lib_page_maintain extends lib_page_page {
 	var $viewfile = "home_view";
 
 	function beforerender() {
-		echo "this site is up for maintenance";
+		echo "this is mvplib<br>This is the test the page<br>";
 	}
 }
 ?>
