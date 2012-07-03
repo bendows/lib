@@ -5,7 +5,7 @@ function __autoload($classname) {
     switch (true) {
         case preg_match("%^l$%", $classname):
             $classname = "lib/l";
-						break;
+            break;
         case preg_match("%^app_view_%", $classname):
             $fn = preg_replace("%^app_view_%", "", $classname);
             $classname = "app/views/$fn";
@@ -60,15 +60,14 @@ function __autoload($classname) {
             $classname = "app/pages/components/{$fn}";
             break;
         default:
-            echo "class file {$classname} not listed in classloader.php";
+            echo "classname {$classname} not listed in function " . __FUNCTION__ . "() in file " . __FILE__ . "<br>";
             break;
     }
 
     $filename = "{$classname}.php";
 
     if (!file_exists("$filename"))
-        echo "class file {$classname} not found";
-
+        echo "file {$classname}.php does not exist or is not a file in function " . __FUNCTION__ . "() in file " . __FILE__ . "<br>";
     if (!file_exists("$filename"))
         return;
 

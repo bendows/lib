@@ -3,9 +3,9 @@
 class lib_router_default {
 
     var $aurl = '';
-		var $maintenance = '';
+
     function __construct() {
-	     $this->maintenance = settings::get('maintenance');
+        
     }
 
     public function seturl($aurl = '') {
@@ -14,4 +14,5 @@ class lib_router_default {
     }
 
 }
+
 ?>
