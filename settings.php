@@ -14,6 +14,7 @@ class settings {
             else {
 								$docroot = dirname(__FILE__)."/..";
                 $tmp = <<<EOT
+
 Create $docroot/app/conf/settings.php with the following content:
 
 <?
@@ -32,6 +33,7 @@ Create $docroot/app/conf/settings.php with the following content:
     )
  );
 ?>
+
 EOT;
                 $tmp = htmlentities($tmp);
                 echo "<pre>$tmp</pre>";
